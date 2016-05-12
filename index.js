@@ -10,10 +10,8 @@ if (ExecutionEnvironment.canUseDOM) {
   // just import prosemirror outright, but it isn't coded for our
   // environment... yet.
   ProseMirror = require('prosemirror/dist/edit').ProseMirror;
-  require('prosemirror/dist/parse/markdown');
-  require('prosemirror/dist/serialize/markdown');
+  require('prosemirror/dist/markdown');
   require('prosemirror/dist/menu/menubar');
-  require('prosemirror/dist/menu/inlinemenu');
 }
 
 
