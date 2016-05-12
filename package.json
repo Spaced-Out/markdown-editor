@@ -2,10 +2,11 @@
   "name": "spacedout-editor",
   "version": "0.1.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:demo": "browserify demo/demo.js -t babelify --outfile demo/bundle.js"
+    "build:demo": "browserify demo/demo.js -t babelify --outfile demo/bundle.js",
+    "dist": "babel src -d dist"
   },
   "author": "-",
   "license": "ISC",
