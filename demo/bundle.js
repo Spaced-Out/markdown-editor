@@ -10670,7 +10670,6 @@ var ProseMirror = exports.ProseMirror = function () {
     // :: Schema
     // The schema for this editor's document.
     this.schema = opts.schema;
-    console.log(opts.schema, "ohai")
     if (opts.doc == null) opts.doc = this.schema.node("doc", null, [this.schema.node("paragraph")]);
     // :: DOMNode
     // The editable DOM node containing the document.
@@ -11296,7 +11295,6 @@ var Operation = function Operation(pm, options) {
   this.mappings = [];
   this.composing = null;
 };
-
 },{"../dom":62,"../format":82,"../util/event":117,"../util/map":118,"../util/sortedinsert":120,"./css":67,"./dompos":69,"./draw":70,"./history":71,"./input":73,"./options":75,"./range":76,"./selection":78,"./transform":79,"browserkeymap":2}],75:[function(require,module,exports){
 "use strict";
 
@@ -11431,7 +11429,6 @@ function initOptions(pm) {
     var desc = options[opt];
     if (desc.update && desc.updateOnInit) desc.update(pm, pm.options[opt], null, true);
   }
-  console.log(options, 'hey')
 }
 
 function setOption(pm, name, value) {
@@ -11442,7 +11439,6 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-
 },{"../model":98,"../ui/prompt":113,"./command":66}],76:[function(require,module,exports){
 "use strict";
 
@@ -14252,7 +14248,6 @@ function tokenTypeInfo(schema) {
 }
 
 function registerTokens(tokens, name, type, info) {
-  console.log({name})
   if (info.parse == "block") {
     tokens[name + "_open"] = function (state, tok) {
       var attrs = typeof info.attrs == "function" ? info.attrs.call(type, state, tok) : info.attrs;
@@ -14301,7 +14296,6 @@ function configFromSchema(schema) {
       var init = null;
       var modifiers = [];
       schema.registry("configureMarkdown", function (name, f) {
-        console.log('registry time', {name, f})
         if (name == "init") {
           if (init) throw new RangeError("Two markdown parser initializers defined in schema");
           init = f;
@@ -14398,7 +14392,6 @@ _model.CodeMark.register("parseMarkdown", "code_inline", { parse: function parse
     state.addText(tok.content);
     state.closeMark(this);
   } });
-
 },{"../format":82,"../model":98,"../util/sortedinsert":120,"markdown-it":6}],90:[function(require,module,exports){
 "use strict";
 

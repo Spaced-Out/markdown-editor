@@ -41,3 +41,4 @@ currently, `dynamic-text.js` exports two methods: either the class `DynamicText`
     dynamicTextWithLabels(labels: string[]): DynamicText
 
 which is used by `<MarkdownEditor />` if any labels are passed in.
+
