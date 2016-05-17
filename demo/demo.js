@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MarkdownEditor from '../dist/index.js';
+import MarkdownEditor from '../src/index.js';
 
 
-ReactDOM.render(<MarkdownEditor value="ohai *there*"/>, document.getElementById('editor'));
+ReactDOM.render(<MarkdownEditor value="ohai {name}" dynamicLabels={['name', 'email']}/>,
+  document.getElementById('editor'));

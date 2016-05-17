@@ -1,10 +1,22 @@
 <!doctype html>
 <html>
 <head>
+<style type="text/css">
+  .prosemirror-dynamic-label {
+    font-weight: bold;
+  }
+  .prosemirror-dynamic-label:before {
+    content: '{';
+  }
+  .prosemirror-dynamic-label:after {
+    content: '}';
+  }
+</style>
 </head>
 <body>
 <div id="editor"></div>
 
+<script src="./vendor.js"></script>
 <script type="text/javascript" src="./bundle.js"></script>
 </body>
 
