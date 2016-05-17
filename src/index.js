@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ExecutionEnvironment from 'exenv';
-
+import {DynamicText, dynamicTextWithLabels} from './dynamic-text';
+import {Schema, defaultSchema} from 'prosemirror/dist/model';
 
 let ProseMirror = () => {};
 if (ExecutionEnvironment.canUseDOM) {
@@ -28,15 +29,25 @@ export default class MarkdownEditor extends Component {
       ('valueLink' in this.props && this.props.valueLink.value) ||
       this.props.defaultValue) || '';
 
+    let spec = defaultSchema.spec;
+
+    if (this.props.dynamicLabels.length) {
+      spec = spec.update({dynamic: dynamicTextWithLabels(this.props.dynamicLabels)});
+    }
+
+    let EditorSchema = new Schema(spec);
+
     this.proseMirror = new ProseMirror({
       place: this.refs.prosemirror,
-      doc: this.val,
+      doc: this.val || '',
       docFormat: 'markdown',
       menuBar: true,
       inlineMenu: true,
       buttonMenu: false,
       label: this.props.label,
+      schema: EditorSchema,
     });
+    window.pm = this.proseMirror
   }
 
   componentDidMount() {
@@ -88,6 +99,10 @@ export default class MarkdownEditor extends Component {
   }
 }
 
+MarkdownEditor.defaultProps = {
+  dynamicLabels: [],
+}
+
 MarkdownEditor.propTypes = {
   value: React.PropTypes.string,
   valueLink: React.PropTypes.object,
@@ -95,6 +110,7 @@ MarkdownEditor.propTypes = {
   defaultValue: React.PropTypes.string,
   label: React.PropTypes.string,
   className: React.PropTypes.string,
+  dynamicLabels: React.PropTypes.arrayOf(React.PropTypes.string),
 };
 
 

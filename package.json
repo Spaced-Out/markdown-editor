@@ -6,6 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:demo": "browserify demo/demo.js -t babelify --outfile demo/bundle.js",
+    "build:vendor": "browserify -r react -r react-dom -r exenv -o demo/vendor.js",
+    "watch": "watchify -x react -x react-dom -x exenv -t babelify demo/demo.js -o demo/bundle.js -v",
+    "run": "npm run build:vendor; npm run watch",
     "dist": "babel src -d dist"
   },
   "author": "-",
@@ -21,6 +24,7 @@
     "babel-preset-react": "^6.5.0",
     "babelify": "^7.3.0",
     "browserify": "^13.0.1",
-    "react-dom": "^15.0.2"
+    "react-dom": "^15.0.2",
+    "watchify": "^3.7.0"
   }
 }
