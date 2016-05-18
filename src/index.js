@@ -59,6 +59,7 @@ export default class MarkdownEditor extends Component {
       buttonMenu: false,
       label: this.props.label,
       schema: EditorSchema,
+      autoInput: true,
     });
     window.pm = this.proseMirror
   }

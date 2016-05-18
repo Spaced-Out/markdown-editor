@@ -77,5 +77,19 @@ export function dynamicTextWithLabels(labels) {
     })
   })
 
+  let rule = `{(${labels.join('|')})}$`;
+  console.log(rule)
+  DynamicText.register("autoInput", "autoDynamic",
+    new InputRule(
+      new RegExp(rule),
+      '}',
+      function(pm, match, pos) {
+        let start = pos - match[0].length;
+        let field = this.create({type: match[1]});
+        pm.tr.delete(start, pos).insertInline(start, field).apply();
+      }
+    )
+  )
+
   return DynamicText;
 }
