@@ -14,6 +14,14 @@ var _exenv = require('exenv');
 
 var _exenv2 = _interopRequireDefault(_exenv);
 
+var _dynamicText = require('./dynamic-text');
+
+var _model = require('prosemirror/dist/model');
+
+var _edit = require('prosemirror/dist/edit');
+
+var _menu = require('prosemirror/dist/menu/menu');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -53,15 +61,31 @@ var MarkdownEditor = function (_Component) {
     value: function componentWillMount() {
       this.val = this.props.value || 'valueLink' in this.props && this.props.valueLink.value || this.props.defaultValue || '';
 
+      var mainMenuBar = {
+        float: true,
+        content: [_menu.inlineGroup, _menu.insertMenu, [_menu.textblockMenu, _menu.blockGroup], _menu.historyGroup, _dynamicText.dynamicMenu]
+      };
+
+      var spec = _model.defaultSchema.spec;
+
+      if (this.props.dynamicLabels.length) {
+        spec = spec.update({ dynamic: (0, _dynamicText.dynamicTextWithLabels)(this.props.dynamicLabels) });
+      }
+
+      var EditorSchema = new _model.Schema(spec);
+
       this.proseMirror = new ProseMirror({
         place: this.refs.prosemirror,
-        doc: this.val,
+        doc: this.val || '',
         docFormat: 'markdown',
-        menuBar: true,
+        menuBar: mainMenuBar,
         inlineMenu: true,
         buttonMenu: false,
-        label: this.props.label
+        label: this.props.label,
+        schema: EditorSchema,
+        autoInput: true
       });
+      window.pm = this.proseMirror;
     }
   }, {
     key: 'componentDidMount',
@@ -127,13 +151,18 @@ var MarkdownEditor = function (_Component) {
 exports.default = MarkdownEditor;
 
 
+MarkdownEditor.defaultProps = {
+  dynamicLabels: []
+};
+
 MarkdownEditor.propTypes = {
   value: _react2.default.PropTypes.string,
   valueLink: _react2.default.PropTypes.object,
   onChange: _react2.default.PropTypes.func,
   defaultValue: _react2.default.PropTypes.string,
   label: _react2.default.PropTypes.string,
-  className: _react2.default.PropTypes.string
+  className: _react2.default.PropTypes.string,
+  dynamicLabels: _react2.default.PropTypes.arrayOf(_react2.default.PropTypes.string)
 };
 
 var Placeholder = function Placeholder(props) {

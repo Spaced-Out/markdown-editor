@@ -22050,6 +22050,14 @@ function dynamicTextWithLabels(labels) {
     });
   });
 
+  var rule = '{(' + labels.join('|') + ')}$';
+
+  DynamicText.register("autoInput", "autoDynamic", new _inputrules.InputRule(new RegExp(rule), '}', function (pm, match, pos) {
+    var start = pos - match[0].length;
+    var field = this.create({ type: match[1] });
+    pm.tr.delete(start, pos).insertInline(start, field).apply();
+  }));
+
   return DynamicText;
 }
 
@@ -22138,7 +22146,8 @@ var MarkdownEditor = function (_Component) {
         inlineMenu: true,
         buttonMenu: false,
         label: this.props.label,
-        schema: EditorSchema
+        schema: EditorSchema,
+        autoInput: true
       });
       window.pm = this.proseMirror;
     }
