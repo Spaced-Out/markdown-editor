@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import ExecutionEnvironment from 'exenv';
-import {DynamicText, dynamicTextWithLabels} from './dynamic-text';
+import {DynamicText, dynamicTextWithLabels, dynamicMenu} from './dynamic-text';
 import {Schema, defaultSchema} from 'prosemirror/dist/model';
+import {CommandSet} from 'prosemirror/dist/edit';
+import {renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup} from "prosemirror/dist/menu/menu"
 
 let ProseMirror = () => {};
 if (ExecutionEnvironment.canUseDOM) {
@@ -29,6 +31,17 @@ export default class MarkdownEditor extends Component {
       ('valueLink' in this.props && this.props.valueLink.value) ||
       this.props.defaultValue) || '';
 
+    const mainMenuBar = {
+      float: true,
+      content: [
+        inlineGroup,
+        insertMenu,
+        [textblockMenu, blockGroup],
+        historyGroup,
+        dynamicMenu,
+      ],
+    }
+
     let spec = defaultSchema.spec;
 
     if (this.props.dynamicLabels.length) {
@@ -41,7 +54,7 @@ export default class MarkdownEditor extends Component {
       place: this.refs.prosemirror,
       doc: this.val || '',
       docFormat: 'markdown',
-      menuBar: true,
+      menuBar: mainMenuBar,
       inlineMenu: true,
       buttonMenu: false,
       label: this.props.label,

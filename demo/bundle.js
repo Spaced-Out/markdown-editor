@@ -15,7 +15,11 @@ var _index2 = _interopRequireDefault(_index);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_reactDom2.default.render(_react2.default.createElement(_index2.default, { value: 'ohai {name}', dynamicLabels: ['name', 'email'] }), document.getElementById('editor'));
+_reactDom2.default.render(_react2.default.createElement(
+  'div',
+  null,
+  _react2.default.createElement(_index2.default, { value: 'ohai {name}', dynamicLabels: ['name', 'email', 'blam'] })
+), document.getElementById('editor'));
 
 },{"../src/index.js":130,"react":"react","react-dom":"react-dom"}],2:[function(require,module,exports){
 (function(mod) {
@@ -21929,7 +21933,7 @@ var curlyTextParser = function curlyTextParser(state, silent) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.DynamicText = undefined;
+exports.dynamicMenu = exports.DynamicText = undefined;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -21947,6 +21951,8 @@ var _curly = require('./curly');
 
 var _curly2 = _interopRequireDefault(_curly);
 
+var _menu = require('prosemirror/dist/menu/menu');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21956,9 +21962,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * a default schema that we use for the editor
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
-
-// const labels = ['name', 'email', 'greeting'];
-//used for rendering menu
 
 var DynamicText = exports.DynamicText = function (_Inline) {
   _inherits(DynamicText, _Inline);
@@ -22018,34 +22021,39 @@ DynamicText.register('parseMarkdown', 'curly', { parse: function parse(state, to
 DynamicText.register('parseMarkdown', 'curly_open', { parse: function parse(state, tok) {} });
 DynamicText.register('parseMarkdown', 'curly_close', { parse: function parse(state, tok) {} });
 
+var dynamicMenu = exports.dynamicMenu = new _menu.Dropdown({ label: 'Insert dynamic field' }, new _menu.MenuCommandGroup('dynamic'));
+
+// this has the effect of modifying subsequent DynamicText modules
 function dynamicTextWithLabels(labels) {
-  var labelOptions = labels.map(function (name) {
-    return { 'label': name, 'value': name };
-  });
-  DynamicText.register('command', 'insert', {
-    derive: {
-      params: [{
-        label: 'Type',
-        attr: 'type',
-        type: 'select',
-        options: labelOptions, // TODO(marcos): make these selectable
-        default: labelOptions[0]
-      }]
-    },
-    label: 'Insert dynamic text',
-    menu: {
-      group: 'insert', // TODO(marcos): move this outside of the
-      rank: 1,
-      display: {
-        type: 'label',
-        label: 'Dynamic Text' // can be an inline svg iirc
+  labels.forEach(function (label, idx) {
+    DynamicText.register('command', 'insert' + label, {
+      run: function run(pm) {
+        var field = this.create({ type: label });
+        var _pm$selection = pm.selection;
+        var from = _pm$selection.from;
+        var to = _pm$selection.to;
+        var node = _pm$selection.node;
+
+        var side = pm.doc.resolve(from).parentOffset ? to : from;
+        pm.tr.insert(side, field).apply(pm.apply.scroll);
+        pm.setTextSelection(side + 1);
+      },
+
+      menu: {
+        group: 'dynamic',
+        rank: (idx + 1) * 10,
+        display: {
+          type: 'label',
+          label: label
+        }
       }
-    }
+    });
   });
+
   return DynamicText;
 }
 
-},{"./curly":128,"prosemirror/dist/dom":62,"prosemirror/dist/inputrules":87,"prosemirror/dist/model":98,"prosemirror/dist/ui/tooltip":114}],130:[function(require,module,exports){
+},{"./curly":128,"prosemirror/dist/dom":62,"prosemirror/dist/inputrules":87,"prosemirror/dist/menu/menu":93,"prosemirror/dist/model":98,"prosemirror/dist/ui/tooltip":114}],130:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -22065,6 +22073,10 @@ var _exenv2 = _interopRequireDefault(_exenv);
 var _dynamicText = require('./dynamic-text');
 
 var _model = require('prosemirror/dist/model');
+
+var _edit = require('prosemirror/dist/edit');
+
+var _menu = require('prosemirror/dist/menu/menu');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22105,6 +22117,11 @@ var MarkdownEditor = function (_Component) {
     value: function componentWillMount() {
       this.val = this.props.value || 'valueLink' in this.props && this.props.valueLink.value || this.props.defaultValue || '';
 
+      var mainMenuBar = {
+        float: true,
+        content: [_menu.inlineGroup, _menu.insertMenu, [_menu.textblockMenu, _menu.blockGroup], _menu.historyGroup, _dynamicText.dynamicMenu]
+      };
+
       var spec = _model.defaultSchema.spec;
 
       if (this.props.dynamicLabels.length) {
@@ -22117,7 +22134,7 @@ var MarkdownEditor = function (_Component) {
         place: this.refs.prosemirror,
         doc: this.val || '',
         docFormat: 'markdown',
-        menuBar: true,
+        menuBar: mainMenuBar,
         inlineMenu: true,
         buttonMenu: false,
         label: this.props.label,
@@ -22216,4 +22233,4 @@ var Placeholder = function Placeholder(props) {
   );
 };
 
-},{"./dynamic-text":129,"exenv":"exenv","prosemirror/dist/edit":72,"prosemirror/dist/markdown":90,"prosemirror/dist/menu/menubar":94,"prosemirror/dist/model":98,"react":"react"}]},{},[1]);
+},{"./dynamic-text":129,"exenv":"exenv","prosemirror/dist/edit":72,"prosemirror/dist/markdown":90,"prosemirror/dist/menu/menu":93,"prosemirror/dist/menu/menubar":94,"prosemirror/dist/model":98,"react":"react"}]},{},[1]);
