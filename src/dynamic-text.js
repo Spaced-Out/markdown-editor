@@ -78,7 +78,7 @@ export function dynamicTextWithLabels(labels) {
   })
 
   let rule = `{(${labels.join('|')})}$`;
-  console.log(rule)
+
   DynamicText.register("autoInput", "autoDynamic",
     new InputRule(
       new RegExp(rule),
