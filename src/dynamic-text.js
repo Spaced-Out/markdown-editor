@@ -7,10 +7,7 @@ import {elt} from 'prosemirror/dist/dom';
 import {InputRule} from 'prosemirror/dist/inputrules';
 import {Tooltip} from 'prosemirror/dist/ui/tooltip';
 import CurlyTextPlugin from './curly';
-
-
-// const labels = ['name', 'email', 'greeting'];
-//used for rendering menu
+import {Dropdown, MenuCommandGroup} from 'prosemirror/dist/menu/menu'
 
 export class DynamicText extends Inline {
   // Not sure what this is for other than tagging
@@ -56,29 +53,29 @@ DynamicText.register('parseMarkdown', 'curly', {parse: function(state, tok) {
 DynamicText.register('parseMarkdown', 'curly_open', { parse: function(state, tok) { }});
 DynamicText.register('parseMarkdown', 'curly_close', { parse: function(state, tok) { }});
 
+export const dynamicMenu = new Dropdown({label: 'Insert dynamic field'}, new MenuCommandGroup('dynamic'))
+
+// this has the effect of modifying subsequent DynamicText modules
 export function dynamicTextWithLabels(labels) {
-  const labelOptions = labels.map((name) => ({ 'label': name, 'value': name }));
-  DynamicText.register('command', 'insert', {
-    derive: {
-      params: [
-        {
-          label: 'Type',
-          attr: 'type',
-          type: 'select',
-          options: labelOptions, // TODO(marcos): make these selectable
-          default: labelOptions[0],
-        },
-      ],
-    },
-    label: 'Insert dynamic text',
-    menu: {
-      group: 'insert', // TODO(marcos): move this outside of the
-      rank: 1,
-      display: {
-        type: 'label',
-        label: 'Dynamic Text' // can be an inline svg iirc
+  labels.forEach((label, idx) => {
+    DynamicText.register('command', 'insert'+label, {
+      run(pm) {
+        const field = this.create({type: label});
+        let {from, to, node} = pm.selection
+        let side = pm.doc.resolve(from).parentOffset ? to : from
+        pm.tr.insert(side, field).apply(pm.apply.scroll)
+        pm.setTextSelection(side + 1)
       },
-    },
+      menu: {
+        group: 'dynamic',
+        rank: (idx + 1) * 10,
+        display: {
+          type: 'label',
+          label
+        }
+      }
+    })
   })
+
   return DynamicText;
 }
