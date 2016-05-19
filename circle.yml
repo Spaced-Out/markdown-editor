@@ -1,1 +1,4 @@
 # default circle.yml
+checkout:
+  post:
+    - mkdir -p dist/test
