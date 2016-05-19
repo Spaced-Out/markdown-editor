@@ -5,12 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "npm run test:serverside",
+    "test:serverside": "browserify -t babelify test/serverside.js -o dist/test/serverside-bundle.js && node dist/test/serverside-bundle.js",
     "build:demo": "browserify demo/demo.js -t babelify --outfile demo/bundle.js",
     "build:vendor": "browserify -r react -r react-dom -r exenv -o demo/vendor.js",
     "watch": "watchify -x react -x react-dom -x exenv -t babelify demo/demo.js -o demo/bundle.js -v",
     "run": "npm run build:vendor; npm run watch",
-    "dist": "babel src -d dist",
-    "test:serverside": "browserify -t babelify test/serverside.js -o test/serverside-bundle.js && node test/serverside-bundle.js"
+    "dist": "babel src -d dist"
   },
   "author": "-",
   "license": "ISC",
