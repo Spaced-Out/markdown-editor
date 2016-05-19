@@ -40,11 +40,11 @@ included here is a ProseMirror inline plugin called `DynamicText` that uses `cur
 
 currently, `dynamic-text.js` exports three things:
 
-1. `dynamicMenu` a `Dropdown` with a `MenuCommandGroup` called `dynamic`.
-2. the class `DynamicText` (which you need to register a command on in order to see it in the menu)
-3. a method `dynamicTextWithLabels` which mutates DynamicText (here, fake-annotated with flow types) and adds labels to
+1. the class `DynamicText` (which, if you only use this, you *need* to register a Command on it in order to see it anywhere)
+2. `dynamicMenu` a `Dropdown` with a `MenuCommandGroup` called `dynamic`. You should see how this is used in src/index.js
+3. a method `dynamicTextWithLabels` which mutates DynamicText (here, fake-annotated with flow types) and adds submenu items to `dynamicMenu` that insert one of the labels passed in.
 
-    dynamicTextWithLabels(labels: string[]): DynamicText
+  `dynamicTextWithLabels(labels: string[]): DynamicText`
 
-which is used by `<MarkdownEditor />` if any labels are passed in, it registers commands for each of the labels, which, in turn, show up as submenu items under the main "Insert Dynamic Labels..." menu, as in the above screenshot.
+  which is used by `<MarkdownEditor />` if any labels are passed in, it registers commands for each of the labels, which, in turn, show up as submenu items under the main "Insert Dynamic Labels..." menu, as in the above screenshot.
 
