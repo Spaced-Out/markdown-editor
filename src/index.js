@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import ExecutionEnvironment from 'exenv';
 import {DynamicText, dynamicTextWithLabels, dynamicMenu} from './dynamic-text';
 import {Schema, defaultSchema} from 'prosemirror/dist/model';
-import {CommandSet} from 'prosemirror/dist/edit';
-import {renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup} from "prosemirror/dist/menu/menu"
+
 
 let ProseMirror = () => {};
+let renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup;
 if (ExecutionEnvironment.canUseDOM) {
   // ProseMirror expects to access the DOM on require, so we
   // gate the requires with exenv. Can't use import though because
@@ -15,6 +15,8 @@ if (ExecutionEnvironment.canUseDOM) {
   ProseMirror = require('prosemirror/dist/edit').ProseMirror;
   require('prosemirror/dist/markdown');
   require('prosemirror/dist/menu/menubar');
+  let menu = require("prosemirror/dist/menu/menu");
+  ({renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup} = menu);
 }
 
 
@@ -61,7 +63,6 @@ export default class MarkdownEditor extends Component {
       schema: EditorSchema,
       autoInput: true,
     });
-    window.pm = this.proseMirror
   }
 
   componentDidMount() {

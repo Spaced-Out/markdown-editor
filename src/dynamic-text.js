@@ -3,11 +3,18 @@
  */
 
 import {Inline, Attribute} from 'prosemirror/dist/model';
-import {elt} from 'prosemirror/dist/dom';
-import {InputRule} from 'prosemirror/dist/inputrules';
-import {Tooltip} from 'prosemirror/dist/ui/tooltip';
 import CurlyTextPlugin from './curly';
-import {Dropdown, MenuCommandGroup} from 'prosemirror/dist/menu/menu'
+import ExecutionEnvironment from 'exenv';
+
+let Dropdown = function(){}
+let MenuCommandGroup = function(){}
+let elt = function(){};
+let InputRule = function(){};
+if (ExecutionEnvironment.canUseDOM) {
+  ({Dropdown, MenuCommandGroup} = require('prosemirror/dist/menu/menu'));
+  ({elt} = require('prosemirror/dist/dom'));
+  ({InputRule} = require('prosemirror/dist/inputrules'));
+}
 
 export class DynamicText extends Inline {
   // Not sure what this is for other than tagging
@@ -78,7 +85,7 @@ export function dynamicTextWithLabels(labels) {
   })
 
   let rule = `{(${labels.join('|')})}$`;
-  console.log(rule)
+
   DynamicText.register("autoInput", "autoDynamic",
     new InputRule(
       new RegExp(rule),
