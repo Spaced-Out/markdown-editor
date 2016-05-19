@@ -11,17 +11,13 @@ exports.dynamicTextWithLabels = dynamicTextWithLabels;
 
 var _model = require('prosemirror/dist/model');
 
-var _dom = require('prosemirror/dist/dom');
-
-var _inputrules = require('prosemirror/dist/inputrules');
-
-var _tooltip = require('prosemirror/dist/ui/tooltip');
-
 var _curly = require('./curly');
 
 var _curly2 = _interopRequireDefault(_curly);
 
-var _menu = require('prosemirror/dist/menu/menu');
+var _exenv = require('exenv');
+
+var _exenv2 = _interopRequireDefault(_exenv);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32,6 +28,25 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * a default schema that we use for the editor
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
+
+var Dropdown = function Dropdown() {};
+var MenuCommandGroup = function MenuCommandGroup() {};
+var elt = function elt() {};
+var InputRule = function InputRule() {};
+if (_exenv2.default.canUseDOM) {
+  var _require = require('prosemirror/dist/menu/menu');
+
+  Dropdown = _require.Dropdown;
+  MenuCommandGroup = _require.MenuCommandGroup;
+
+  var _require2 = require('prosemirror/dist/dom');
+
+  elt = _require2.elt;
+
+  var _require3 = require('prosemirror/dist/inputrules');
+
+  InputRule = _require3.InputRule;
+}
 
 var DynamicText = exports.DynamicText = function (_Inline) {
   _inherits(DynamicText, _Inline);
@@ -57,7 +72,7 @@ var DynamicText = exports.DynamicText = function (_Inline) {
 }(_model.Inline);
 
 DynamicText.prototype.serializeDOM = function (node) {
-  var newNode = (0, _dom.elt)('span', {
+  var newNode = elt('span', {
     'dynamic-label': node.attrs.type, // is this passed in by the command?
     'class': 'prosemirror-dynamic-label'
   }, '' + node.attrs.type);
@@ -91,7 +106,7 @@ DynamicText.register('parseMarkdown', 'curly', { parse: function parse(state, to
 DynamicText.register('parseMarkdown', 'curly_open', { parse: function parse(state, tok) {} });
 DynamicText.register('parseMarkdown', 'curly_close', { parse: function parse(state, tok) {} });
 
-var dynamicMenu = exports.dynamicMenu = new _menu.Dropdown({ label: 'Insert dynamic field' }, new _menu.MenuCommandGroup('dynamic'));
+var dynamicMenu = exports.dynamicMenu = new Dropdown({ label: 'Insert dynamic field' }, new MenuCommandGroup('dynamic'));
 
 // this has the effect of modifying subsequent DynamicText modules
 function dynamicTextWithLabels(labels) {
@@ -122,7 +137,7 @@ function dynamicTextWithLabels(labels) {
 
   var rule = '{(' + labels.join('|') + ')}$';
 
-  DynamicText.register("autoInput", "autoDynamic", new _inputrules.InputRule(new RegExp(rule), '}', function (pm, match, pos) {
+  DynamicText.register("autoInput", "autoDynamic", new InputRule(new RegExp(rule), '}', function (pm, match, pos) {
     var start = pos - match[0].length;
     var field = this.create({ type: match[1] });
     pm.tr.delete(start, pos).insertInline(start, field).apply();

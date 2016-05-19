@@ -18,10 +18,6 @@ var _dynamicText = require('./dynamic-text');
 
 var _model = require('prosemirror/dist/model');
 
-var _edit = require('prosemirror/dist/edit');
-
-var _menu = require('prosemirror/dist/menu/menu');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31,6 +27,12 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var ProseMirror = function ProseMirror() {};
+var renderGrouped = void 0,
+    inlineGroup = void 0,
+    insertMenu = void 0,
+    textblockMenu = void 0,
+    blockGroup = void 0,
+    historyGroup = void 0;
 if (_exenv2.default.canUseDOM) {
   // ProseMirror expects to access the DOM on require, so we
   // gate the requires with exenv. Can't use import though because
@@ -40,6 +42,13 @@ if (_exenv2.default.canUseDOM) {
   ProseMirror = require('prosemirror/dist/edit').ProseMirror;
   require('prosemirror/dist/markdown');
   require('prosemirror/dist/menu/menubar');
+  var menu = require("prosemirror/dist/menu/menu");
+  renderGrouped = menu.renderGrouped;
+  inlineGroup = menu.inlineGroup;
+  insertMenu = menu.insertMenu;
+  textblockMenu = menu.textblockMenu;
+  blockGroup = menu.blockGroup;
+  historyGroup = menu.historyGroup;
 }
 
 var MarkdownEditor = function (_Component) {
@@ -63,7 +72,7 @@ var MarkdownEditor = function (_Component) {
 
       var mainMenuBar = {
         float: true,
-        content: [_menu.inlineGroup, _menu.insertMenu, [_menu.textblockMenu, _menu.blockGroup], _menu.historyGroup, _dynamicText.dynamicMenu]
+        content: [inlineGroup, insertMenu, [textblockMenu, blockGroup], historyGroup, _dynamicText.dynamicMenu]
       };
 
       var spec = _model.defaultSchema.spec;
@@ -85,7 +94,6 @@ var MarkdownEditor = function (_Component) {
         schema: EditorSchema,
         autoInput: true
       });
-      window.pm = this.proseMirror;
     }
   }, {
     key: 'componentDidMount',

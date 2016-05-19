@@ -1,7 +1,7 @@
 {
   "name": "spacedout-editor",
-  "version": "0.2.0",
-  "description": "",
+  "version": "0.3.0",
+  "description": "a barely configurable isomorphic prosemirror react widget",
   "main": "dist/index.js",
   "scripts": {
     "test": "npm run test:serverside",
