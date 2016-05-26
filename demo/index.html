@@ -2,6 +2,9 @@
 <html>
 <head>
 <style type="text/css">
+  #editor {
+    width: 600px;
+  }
   .prosemirror-dynamic-label {
     font-weight: bold;
   }
@@ -10,6 +13,28 @@
   }
   .prosemirror-dynamic-label:after {
     content: '}';
+  }
+
+  .ProseMirror-prompt {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+  }
+
+  .prosemirror-video-embed {
+    display: inline-flex;
+    width: 150px;
+    height: 100px;
+    font-size: 10px;
+    font-family: sans-serif;
+    background-color: #eee;
+    align-items: flex-end;
+  }
+
+  .prosemirror-prompt-row-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
   }
 </style>
 </head>
