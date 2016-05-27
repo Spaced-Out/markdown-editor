@@ -3,7 +3,7 @@ import ExecutionEnvironment from 'exenv';
 import {DynamicText, dynamicTextWithLabels, dynamicMenu} from './dynamic-text';
 import {Schema, defaultSchema} from 'prosemirror/dist/model';
 import {VideoEmbed} from './video';
-
+import './param-prompt';
 
 let ProseMirror = () => {};
 let renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup;
