@@ -3,7 +3,7 @@
  */
 
 import {Inline, Attribute} from 'prosemirror/dist/model';
-import CurlyTextPlugin from './curly';
+import DynamicTextPlugin from './markdown-it-dynamic';
 import ExecutionEnvironment from 'exenv';
 
 let Dropdown = function(){}
@@ -31,7 +31,7 @@ DynamicText.prototype.serializeDOM = (node) => {
       'dynamic-label': node.attrs.type, // is this passed in by the command?
       'class': 'prosemirror-dynamic-label'
     },
-    `${node.attrs.type}`);
+    `<${node.attrs.type}>`);
   return newNode;
   }
 
@@ -47,18 +47,18 @@ DynamicText.register('parseDOM', 'span', {
 DynamicText.prototype.serializeMarkdown = (state, node) => {
   state.write(`{${node.attrs.type}}`)
 };
-DynamicText.register('configureMarkdown', 'curly', parser => {
-  return parser.use(CurlyTextPlugin);
+DynamicText.register('configureMarkdown', 'dynamic', parser => {
+  return parser.use(DynamicTextPlugin);
 })
 
 // this works
-DynamicText.register('parseMarkdown', 'curly', {parse: function(state, tok) {
+DynamicText.register('parseMarkdown', 'dynamic', {parse: function(state, tok) {
   state.addNode(this, {type: tok.content});
 }})
 
 // TODO(marcos): find out how to get the parse: 'block' behavior for inline nodes
-DynamicText.register('parseMarkdown', 'curly_open', { parse: function(state, tok) { }});
-DynamicText.register('parseMarkdown', 'curly_close', { parse: function(state, tok) { }});
+DynamicText.register('parseMarkdown', 'dynamic_open', { parse: function(state, tok) { }});
+DynamicText.register('parseMarkdown', 'dynamic_close', { parse: function(state, tok) { }});
 
 export const dynamicMenu = new Dropdown({label: 'Insert dynamic field'}, new MenuCommandGroup('dynamic'))
 

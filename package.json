@@ -1,6 +1,6 @@
 {
   "name": "spacedout-editor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "a barely configurable isomorphic prosemirror react widget",
   "main": "dist/index.js",
   "scripts": {

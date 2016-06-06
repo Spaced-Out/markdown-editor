@@ -11,9 +11,9 @@ exports.dynamicTextWithLabels = dynamicTextWithLabels;
 
 var _model = require('prosemirror/dist/model');
 
-var _curly = require('./curly');
+var _markdownItDynamic = require('./markdown-it-dynamic');
 
-var _curly2 = _interopRequireDefault(_curly);
+var _markdownItDynamic2 = _interopRequireDefault(_markdownItDynamic);
 
 var _exenv = require('exenv');
 
@@ -75,7 +75,7 @@ DynamicText.prototype.serializeDOM = function (node) {
   var newNode = elt('span', {
     'dynamic-label': node.attrs.type, // is this passed in by the command?
     'class': 'prosemirror-dynamic-label'
-  }, '' + node.attrs.type);
+  }, '<' + node.attrs.type + '>');
   return newNode;
 };
 
@@ -93,18 +93,18 @@ DynamicText.register('parseDOM', 'span', {
 DynamicText.prototype.serializeMarkdown = function (state, node) {
   state.write('{' + node.attrs.type + '}');
 };
-DynamicText.register('configureMarkdown', 'curly', function (parser) {
-  return parser.use(_curly2.default);
+DynamicText.register('configureMarkdown', 'dynamic', function (parser) {
+  return parser.use(_markdownItDynamic2.default);
 });
 
 // this works
-DynamicText.register('parseMarkdown', 'curly', { parse: function parse(state, tok) {
+DynamicText.register('parseMarkdown', 'dynamic', { parse: function parse(state, tok) {
     state.addNode(this, { type: tok.content });
   } });
 
 // TODO(marcos): find out how to get the parse: 'block' behavior for inline nodes
-DynamicText.register('parseMarkdown', 'curly_open', { parse: function parse(state, tok) {} });
-DynamicText.register('parseMarkdown', 'curly_close', { parse: function parse(state, tok) {} });
+DynamicText.register('parseMarkdown', 'dynamic_open', { parse: function parse(state, tok) {} });
+DynamicText.register('parseMarkdown', 'dynamic_close', { parse: function parse(state, tok) {} });
 
 var dynamicMenu = exports.dynamicMenu = new Dropdown({ label: 'Insert dynamic field' }, new MenuCommandGroup('dynamic'));
 
