@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import ExecutionEnvironment from 'exenv';
 import {DynamicText, dynamicTextWithLabels, dynamicMenu} from './dynamic-text';
 import {Schema, defaultSchema} from 'prosemirror/dist/model';
-
+import {VideoEmbed} from './video';
+import './param-prompt';
 
 let ProseMirror = () => {};
 let renderGrouped, inlineGroup, insertMenu, textblockMenu, blockGroup, historyGroup;
@@ -49,6 +50,7 @@ export default class MarkdownEditor extends Component {
     if (this.props.dynamicLabels.length) {
       spec = spec.update({dynamic: dynamicTextWithLabels(this.props.dynamicLabels)});
     }
+    spec = spec.update({video: VideoEmbed});
 
     let EditorSchema = new Schema(spec);
 
@@ -63,6 +65,10 @@ export default class MarkdownEditor extends Component {
       schema: EditorSchema,
       autoInput: true,
     });
+
+    if (this.props.debug) {
+      window.pm = this.proseMirror;
+    }
   }
 
   componentDidMount() {
