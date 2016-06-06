@@ -1,10 +1,10 @@
-// this a curly text markdown parser for markdown-it that is mostly a fork
+// this a dynamic text markdown parser for markdown-it that is mostly a fork
 // of the '~' markdown-it-sub parser but to handle open/closing tags
 //
-// curly_open and curly_close are there in case we decide to do something with them,
+// dynamic_open and dynamic_close are there in case we decide to do something with them,
 // but for now they render noop in the actual editor (see dynamic-text.js)
 
-let curlyTextParser = (state, silent) => {
+let dynamicTextParser = (state, silent) => {
   let UNESCAPE_MD_RE = /\\([\\!"#$%&'()*+,.\/:;<=>?@[\]^_`{|}~-])/g;
   const max = state.posMax;
   const start = state.pos;
@@ -40,14 +40,14 @@ let curlyTextParser = (state, silent) => {
   state.pos = start + 1;
 
   // Earlier we checked !silent, but this implementation does not need it
-  let token     = state.push('curly_open', 'curly', 1);
-  token.markup  = '{';
+  let token     = state.push('dynamic_open', 'dynamic', 1);
+  token.markup  = '<';
 
-  token         = state.push('curly', 'text', 0);
+  token         = state.push('dynamic', 'text', 0);
   token.content = content.replace(UNESCAPE_MD_RE, '$1');
 
-  token         = state.push('curly_close','curly', -1);
-  token.markup  = '}';
+  token         = state.push('dynamic_close','dynamic', -1);
+  token.markup  = '>';
 
   state.pos = state.posMax + 1;
   state.posMax = max;
@@ -55,7 +55,7 @@ let curlyTextParser = (state, silent) => {
 }
 
 export default function(md, opts) {
-  md.inline.ruler.after('emphasis', 'curly', curlyTextParser);
-  md.renderer.rules.curly_open = () => {return '{'}
-  md.renderer.rules.curly_open = () => {return '}'}
+  md.inline.ruler.after('emphasis', 'dynamic', dynamicTextParser);
+  md.renderer.rules.dynamic_open = () => {return '<'}
+  md.renderer.rules.dynamic_open = () => {return '>'}
 };
