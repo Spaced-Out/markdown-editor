@@ -1,6 +1,7 @@
-import {Inline, Attribute} from 'prosemirror/dist/model';
+import {Inline, Block, Attribute} from 'prosemirror/dist/model';
 import MarkdownVideoPlugin from 'markdown-it-video';
 import ExecutionEnvironment from 'exenv';
+import {videoUrlParser} from './video-url';
 
 
 let Dropdown = function(){}
@@ -13,16 +14,20 @@ if (ExecutionEnvironment.canUseDOM) {
 }
 
 
-export class VideoEmbed extends Inline {
+
+
+export class VideoEmbed extends Block {
   // Not sure what this is for other than tagging
   get attrs() {
     return {
+      // url: new Attribute({label: 'video url'}),
       videoId: new Attribute({label: 'video id'}),
       service: new Attribute({label: 'hosting service'}),
       width: new Attribute({label: 'embed width', default: 320}),
       height: new Attribute({label: 'embed height', default: 240}),
     }
   }
+  get contains() { return null }
 }
 
 const generateVideoUrl = (attrs) => {
@@ -35,14 +40,14 @@ const generateVideoUrl = (attrs) => {
   }
 }
 
-const generateTempVideoNode = (attrs) => {
+const generateTempVideoNode = (s, attrs) => {
   let {service, videoId} = attrs;
   const videoUrl = generateVideoUrl(attrs);
 
-  return elt('span', {
+  return s.elt('span', {
     'class': `prosemirror-video-embed prosemirror-video-embed-${service}`,
     'contenteditable': 'false'
-  }, elt('span', {
+  }, s.elt('span', {
     'class': `prosemirror-video-embed-label`
   }, `video at ${videoUrl}`))
 };
@@ -50,7 +55,7 @@ const generateTempVideoNode = (attrs) => {
 VideoEmbed.prototype.serializeMarkdown = (state, node) => {
   state.write(`@[${node.attrs.service}](${node.attrs.videoId})`)
 }
-VideoEmbed.prototype.serializeDOM = (node) => {
+VideoEmbed.prototype.serializeDOM = (node, serializer) => {
   const {service, videoId} = node.attrs;
   if (['vimeo', 'youtube'].indexOf(service.toLowerCase()) < 0) {
     return;
@@ -64,7 +69,7 @@ VideoEmbed.prototype.serializeDOM = (node) => {
   //     })
   // }
 
-  return generateTempVideoNode(node.attrs);
+  return serializer.elt('div', null, generateTempVideoNode(serializer, node.attrs));
 }
 
 
@@ -86,14 +91,10 @@ VideoEmbed.register("command", "insert", {
   })
 
 VideoEmbed.register('parseMarkdown', 'video', {parse: function(state, tok) {
-  state.addNode(this, {service: tok.service, videoId: tok.videoID});
+  state.addNode(this, {service: tok.service, videoId: tok.videoID, markup: '<div>'});
 }})
 
 
 VideoEmbed.register('configureMarkdown', 'video', parser => {
   return parser.use(MarkdownVideoPlugin);
 })
-
-// export const dynamicMenu = new Dropdown({label: 'Insert dynamic field'}, new MenuCommandGroup('dynamic'))
-
-
