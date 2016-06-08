@@ -91,7 +91,7 @@ DynamicText.register('parseDOM', 'span', {
 });
 
 DynamicText.prototype.serializeMarkdown = function (state, node) {
-  state.write('{' + node.attrs.type + '}');
+  state.write('<' + node.attrs.type + '>');
 };
 DynamicText.register('configureMarkdown', 'dynamic', function (parser) {
   return parser.use(_markdownItDynamic2.default);

@@ -45,7 +45,7 @@ DynamicText.register('parseDOM', 'span', {
 })
 
 DynamicText.prototype.serializeMarkdown = (state, node) => {
-  state.write(`{${node.attrs.type}}`)
+  state.write(`<${node.attrs.type}>`)
 };
 DynamicText.register('configureMarkdown', 'dynamic', parser => {
   return parser.use(DynamicTextPlugin);
